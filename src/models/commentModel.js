@@ -23,3 +23,15 @@ export const deleteCommentById = async (id) => {
   }
   return { success: true, message: '댓글이 삭제되었습니다.' };
 };
+
+export const createComment = async (cafeId, nickname, password, content) => {
+  const [result] = await pool.query(
+    'INSERT INTO comment (cafe_Id, nickname, password, content) VALUES (?, ?, ?, ?)',
+    [cafeId, nickname, password, content],
+  );
+  // console.log(result);
+  if (result.affectedRows === 0) {
+    return { success: false, message: '댓글 생성에 실패했습니다.' };
+  }
+  return { success: true, message: '댓글이 생성되었습니다.' };
+};

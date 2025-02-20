@@ -2,7 +2,10 @@ import {
   getComments,
   getCommentById,
   deleteCommentById,
+  createComment,
 } from '../models/commentModel.js';
+
+import { getCafeById } from '../models/cafeModel.js';
 
 export const findAllComments = async () => {
   //: DB에서 데이터 조회하는 함수 호출 후 리턴
@@ -23,5 +26,12 @@ export const findDeleteComment = async (id) => {
     throw { status: 404, message: '잘못된 요청입니다.' };
   }
   const result = await deleteCommentById(id);
+  return result;
+};
+
+export const createNewComment = async (cafeId, nickname, password, content) => {
+  const cafe = await getCafeById(cafeId);
+  if (!cafe) throw { status: 404, message: '등록되지 않은 카페입니다.' };
+  const result = await createComment(cafeId, nickname, password, content);
   return result;
 };

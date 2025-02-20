@@ -2,6 +2,7 @@ import {
   findAllComments,
   findCommentById,
   findDeleteComment,
+  createNewComment,
 } from '../services/commentService.js';
 
 // DB에서 조회된 데이터 가져와서 가공
@@ -26,6 +27,30 @@ export const getComment = async (req, res) => {
 export const deleteComment = async (req, res) => {
   try {
     const result = await findDeleteComment(req.params.id);
+    if (result.success) {
+      res.status(200).json(result);
+    } else {
+      res.status(404).json(result);
+    }
+  } catch (err) {
+    if (err.status) {
+      res.status(err.status).json({ success: false, message: err.message });
+    } else {
+      res.status(500).json({ success: false, message: '서버 오류 발생' });
+    }
+  }
+};
+
+export const createComment = async (req, res) => {
+  try {
+    //: 닉네임, 비밀번호, 댓글내용
+    const { cafeId, nickname, password, content } = req.body;
+    if (!cafeId || !nickname || !password || !content) {
+      return res
+        .status(400)
+        .json({ success: false, message: '필수 입력값이 없습니다.' });
+    }
+    const result = await createNewComment(cafeId, nickname, password, content);
     if (result.success) {
       res.status(200).json(result);
     } else {
