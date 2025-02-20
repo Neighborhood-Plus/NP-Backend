@@ -1,0 +1,27 @@
+import {
+  getComments,
+  getCommentById,
+  deleteCommentById,
+} from '../models/commentModel.js';
+
+export const findAllComments = async () => {
+  //: DB에서 데이터 조회하는 함수 호출 후 리턴
+  return await getComments();
+};
+
+export const findCommentById = async (id) => {
+  //: DB에서 데이터 조회하는 함수 호출 후 리턴
+  const comment = await getCommentById(id);
+  if (!comment) throw new Error('댓글을 찾을 수 없습니다.');
+  return comment;
+};
+
+export const findDeleteComment = async (id) => {
+  //: 이름은 delete이지만 실제로는 update 동작
+  const comment = await getCommentById(id);
+  if (!comment || comment.deleted === 1) {
+    throw { status: 404, message: '잘못된 요청입니다.' };
+  }
+  const result = await deleteCommentById(id);
+  return result;
+};
