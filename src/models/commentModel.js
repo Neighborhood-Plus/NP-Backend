@@ -29,7 +29,6 @@ export const createComment = async (cafeId, nickname, password, content) => {
     'INSERT INTO comment (cafe_Id, nickname, password, content) VALUES (?, ?, ?, ?)',
     [cafeId, nickname, password, content],
   );
-  // console.log(result);
   if (result.affectedRows === 0) {
     return { success: false, message: '댓글 생성에 실패했습니다.' };
   }

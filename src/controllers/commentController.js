@@ -4,6 +4,7 @@ import {
   findDeleteComment,
   createNewComment,
 } from '../services/commentService.js';
+import bcrypt from 'bcrypt';
 
 // DB에서 조회된 데이터 가져와서 가공
 export const getAllComments = async (req, res) => {
@@ -26,7 +27,8 @@ export const getComment = async (req, res) => {
 
 export const deleteComment = async (req, res) => {
   try {
-    const result = await findDeleteComment(req.params.id);
+    const inputPassword = req.body.password;
+    const result = await findDeleteComment(req.params.id, inputPassword);
     if (result.success) {
       res.status(200).json(result);
     } else {
@@ -50,7 +52,16 @@ export const createComment = async (req, res) => {
         .status(400)
         .json({ success: false, message: '필수 입력값이 없습니다.' });
     }
-    const result = await createNewComment(cafeId, nickname, password, content);
+    //: password hash
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const result = await createNewComment(
+      cafeId,
+      nickname,
+      hashedPassword,
+      content,
+    );
     if (result.success) {
       res.status(200).json(result);
     } else {

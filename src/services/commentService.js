@@ -4,6 +4,7 @@ import {
   deleteCommentById,
   createComment,
 } from '../models/commentModel.js';
+import bcrypt from 'bcrypt';
 
 import { getCafeById } from '../models/cafeModel.js';
 
@@ -19,12 +20,15 @@ export const findCommentById = async (id) => {
   return comment;
 };
 
-export const findDeleteComment = async (id) => {
+export const findDeleteComment = async (id, password) => {
   //: 이름은 delete이지만 실제로는 update 동작
   const comment = await getCommentById(id);
   if (!comment || comment.deleted === 1) {
     throw { status: 404, message: '잘못된 요청입니다.' };
   }
+  const storedHash = comment.password;
+  const isMatch = await bcrypt.compare(password, storedHash);
+  if (!isMatch) throw { status: 404, message: '비밀번호가 일치하지 않습니다.' };
   const result = await deleteCommentById(id);
   return result;
 };
